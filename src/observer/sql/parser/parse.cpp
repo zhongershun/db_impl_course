@@ -61,13 +61,28 @@ void value_init_string(Value *value, const char *v)
 bool check_date(int y, int m, int d)
 {
   // TODO 根据 y:year,m:month,d:day 校验日期是否合法
+  bool y_legal = y>=1970;
+  bool m_legal = (0<m)&&(m<=12);
+  bool d_legal = 1;
+  int day_per_mon[] = {31,28,31,30,31,30,31,31,30,31,30,31};
+  if((y%400==0)||(y%100 && y%4==0)){
+    if(m==2) d_legal = (0<d)&&(d<=day_per_mon[1]+1);
+    else d_legal = (0<d)&&(d<=(day_per_mon[m-1]));
+  }else{
+    d_legal = (0<d)&&(d<=day_per_mon[m-1]);
+  }
+  if(y>=2038&&m>=2){
+    return 0;
+  }
+  return (y_legal&&m_legal&&d_legal);
   // TODO 合法 return 0
   // TODO 不合法 return 1
-  return 1;
+  // return 1;
 }
 
 int value_init_date(Value *value, const char *v) {
   // TODO 将 value 的 type 属性修改为日期属性:DATES
+  value->type = DATES;
 
   // 从lex的解析中读取 year,month,day
   int y,m,d;
@@ -76,9 +91,11 @@ int value_init_date(Value *value, const char *v) {
   bool b = check_date(y,m,d);
   if(!b) return -1;
   // TODO 将日期转换成整数
-
+  // 1970*10000
+  int date_v = y*10000+m*100+d;
   // TODO 将value 的 data 属性修改为转换后的日期
-
+  value->data = malloc(sizeof(date_v));
+  memcpy(value->data, &date_v, sizeof(date_v));
   return 0;
 }
 

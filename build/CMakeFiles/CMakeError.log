@@ -1,0 +1,66 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_c25e4/fast && /usr/bin/make  -f CMakeFiles/cmTC_c25e4.dir/build.make CMakeFiles/cmTC_c25e4.dir/build
+make[1]: Entering directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT'
+Building C object CMakeFiles/cmTC_c25e4.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG   -o CMakeFiles/cmTC_c25e4.dir/src.c.o -c /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c
+Linking C executable cmTC_c25e4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c25e4.dir/link.txt --verbose=1
+/usr/bin/cc  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG   CMakeFiles/cmTC_c25e4.dir/src.c.o -o cmTC_c25e4 
+CMakeFiles/cmTC_c25e4.dir/src.c.o: In function `main':
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c:11: undefined reference to `pthread_create'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c:12: undefined reference to `pthread_detach'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c:13: undefined reference to `pthread_cancel'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c:14: undefined reference to `pthread_join'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT/src.c:15: undefined reference to `pthread_atfork'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_c25e4.dir/build.make:98: recipe for target 'cmTC_c25e4' failed
+make[1]: *** [cmTC_c25e4] Error 1
+make[1]: Leaving directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HwNUBT'
+Makefile:127: recipe for target 'cmTC_c25e4/fast' failed
+make: *** [cmTC_c25e4/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-e2VHkb
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_e8b42/fast && /usr/bin/make  -f CMakeFiles/cmTC_e8b42.dir/build.make CMakeFiles/cmTC_e8b42.dir/build
+make[1]: Entering directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-e2VHkb'
+Building C object CMakeFiles/cmTC_e8b42.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG  -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_e8b42.dir/CheckFunctionExists.c.o -c /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-e2VHkb/CheckFunctionExists.c
+Linking C executable cmTC_e8b42
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e8b42.dir/link.txt --verbose=1
+/usr/bin/cc  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_e8b42.dir/CheckFunctionExists.c.o -o cmTC_e8b42  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_e8b42.dir/build.make:98: recipe for target 'cmTC_e8b42' failed
+make[1]: *** [cmTC_e8b42] Error 1
+make[1]: Leaving directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-e2VHkb'
+Makefile:127: recipe for target 'cmTC_e8b42/fast' failed
+make: *** [cmTC_e8b42/fast] Error 2
+
+
+

@@ -36,6 +36,11 @@ int attribute_comp(const char *first, const char *second, AttrType attr_type, in
   const char *s1, *s2;
   switch (attr_type) {
     //TODO 模仿其他类型在相关方法中增加DATES类型
+    case DATES: {
+      i1 = *(int *)first;
+      i2 = *(int *)second;
+      return i1-i2;
+    }
     case INTS:{
       i1 = *(int *)first;
       i2 = *(int *)second;
@@ -2297,6 +2302,10 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
   AttrType attr_type = index_handler_.file_header_.attr_type;
   switch (attr_type) {
     //TODO 模仿其他类型在相关方法中增加DATES类型
+    case DATES:
+      i1 = *(int *)pkey;
+      i2 = *(int *)value_;
+      break;
     case INTS:
       i1 = *(int *)pkey;
       i2 = *(int *)value_;
@@ -2320,6 +2329,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case EQUAL_TO:
       //TODO 模仿其他类型在相关方法中增加DATES类型
       switch (attr_type) {
+        case DATES:
+          flag = (i1 == i2);
+          break;
         case INTS:
           flag = (i1 == i2);
           break;
@@ -2336,6 +2348,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case LESS_THAN:
       switch (attr_type) {
         //TODO 模仿其他类型在相关方法中增加DATES类型
+        case DATES:
+          flag = (i1 < i2);
+          break;
         case INTS:
           flag = (i1 < i2);
           break;
@@ -2352,6 +2367,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case GREAT_THAN:
       switch (attr_type) {
         //TODO 模仿其他类型在相关方法中增加DATES类型
+        case DATES:
+          flag = (i1 > i2);
+          break;
         case INTS:
           flag = (i1 > i2);
           break;
@@ -2368,6 +2386,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case LESS_EQUAL:
       switch (attr_type) {
         //TODO 模仿其他类型在相关方法中增加DATES类型
+        case DATES:
+          flag = (i1 <= i2);
+          break;
         case INTS:
           flag = (i1 <= i2);
           break;
@@ -2384,6 +2405,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case GREAT_EQUAL:
       switch (attr_type) {
         //TODO 模仿其他类型在相关方法中增加DATES类型
+        case DATES:
+          flag = (i1 >= i2);
+          break;
         case INTS:
           flag = (i1 >= i2);
           break;
@@ -2400,6 +2424,9 @@ bool BplusTreeScanner::satisfy_condition(const char *pkey)
     case NOT_EQUAL:
       switch (attr_type) {
         //TODO 模仿其他类型在相关方法中增加DATES类型
+        case DATES:
+          flag = (i1 != i2);
+          break;
         case INTS:
           flag = (i1 != i2);
           break;
