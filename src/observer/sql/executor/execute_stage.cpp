@@ -243,21 +243,34 @@ std::string agg_to_string(Aggregation agg) {
 void aggregation_exec(const Selects &selects, TupleSet *res_tuples) {
   if (selects.aggregation_num > 0) {
     TupleSchema agg_schema;
-    //TODO 设置schema
+    //TODO 设置schema 
+    agg_schema = res_tuples->get_schema();
     //TODO 依次添加字段值
     Tuple out;
     for (size_t i = 0; i < selects.aggregation_num; i++) {
       const Aggregation &agg = selects.aggregations[i];
       const std::vector<Tuple> &tuples = res_tuples->tuples();
       switch (agg.func_name) {
-        case FuncName::AGG_MAX:
+        case FuncName::AGG_MAX: {
+          break;
+        }
         case FuncName::AGG_MIN: {
           //TODO 遍历所有元组，获取最值
-          //TODO 增加这条记录
+          //TODO 增加这条记录 
+          for(std::vector<Tuple>::const_iterator
+                 it = tuples.begin(),
+                 end = tuples.end();
+          it != end; ++it){
+            out.add(it->get(0));
+          }
+          
+          break;
         }
         case FuncName::AGG_COUNT: {
           // 值为size的大小
           //TODO 增加这条记录
+          out.add(int(tuples.size()));
+          break;
         }
         case FuncName::AGG_AVG: {
           //TODO 遍历所有元组，获取和
@@ -396,6 +409,7 @@ RC ExecuteStage::do_select(const char *db, const Query *sql,
     } else {
     //TODO 添加聚合算子
     // 当前只查询一张表，直接返回结果即可
+      aggregation_exec(selects, &tuple_sets.front());
       tuple_sets.front().print(ss);
     }
     for (SelectExeNode *&tmp_node: select_nodes) {
