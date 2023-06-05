@@ -77,6 +77,7 @@ void ParseStage::cleanup() {
   LOG_TRACE("Exit");
 }
 
+
 void ParseStage::handle_event(StageEvent *event) {
   LOG_TRACE("Enter\n");
 

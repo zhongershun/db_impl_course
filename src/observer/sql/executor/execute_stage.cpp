@@ -217,9 +217,26 @@ std::string agg_to_string(Aggregation agg) {
   //TODO 构造聚合函数名字
   switch (agg.func_name) {
     //TODO AGG_MAX
+    case FuncName::AGG_MAX:{
+      res+="max";
+      break;
+    }
+
     //TODO AGG_MIN
+    case FuncName::AGG_MIN:{
+      res+="min";
+      break;
+    }
     //TODO AGG_COUNT
+    case FuncName::AGG_COUNT:{
+      res+="count";
+      break;
+    }
     //TODO AGG_AVG
+    case FuncName::AGG_AVG:{
+      res+="avg";
+      break;
+    }
   }
   res += "(";
   if (1 == agg.is_value) {
@@ -229,12 +246,26 @@ std::string agg_to_string(Aggregation agg) {
     //TODO 构造输出表达字符串
     switch (type) {
       //TODO INT
+      case INTS:{
+        break;
+      }
       //TODO FLOAT
+      case FLOATS:{
+        break;
+      }
       //TODO DATES
+      case DATES:{
+
+      }
     }
   }
   else{
     //TODO 如果有relation_name和field_name的话也要添加
+    res+=agg.attribute.relation_name;
+    if(agg.attribute.attribute_name!=NULL){
+      res+=".";
+      res+=agg.attribute.attribute_name;
+    }
   }
   res += ")";
   return res;
@@ -252,18 +283,30 @@ void aggregation_exec(const Selects &selects, TupleSet *res_tuples) {
       const std::vector<Tuple> &tuples = res_tuples->tuples();
       switch (agg.func_name) {
         case FuncName::AGG_MAX: {
+          std::vector<Tuple>::const_iterator maxit = tuples.begin();
+          for(std::vector<Tuple>::const_iterator 
+          it = tuples.begin()+1; it != tuples.end();it++
+          ){
+            if(it->get(0).compare(tuples.begin()->get(0))){
+              maxit = it;
+            }
+          }
+          out.add(maxit->get_pointer(0));
+          break;
           break;
         }
         case FuncName::AGG_MIN: {
           //TODO 遍历所有元组，获取最值
-          //TODO 增加这条记录 
-          for(std::vector<Tuple>::const_iterator
-                 it = tuples.begin(),
-                 end = tuples.end();
-          it != end; ++it){
-            out.add(it->get(0));
+          //TODO 增加这条记录
+          std::vector<Tuple>::const_iterator minit = tuples.begin();
+          for(std::vector<Tuple>::const_iterator 
+          it = tuples.begin()+1; it != tuples.end();it++
+          ){
+            if(!(it->get(0).compare(tuples.begin()->get(0)))){
+              minit = it;
+            }
           }
-          
+          out.add(minit->get_pointer(0));
           break;
         }
         case FuncName::AGG_COUNT: {
@@ -276,6 +319,11 @@ void aggregation_exec(const Selects &selects, TupleSet *res_tuples) {
           //TODO 遍历所有元组，获取和
           float sum = 0;
           //TODO 增加这条记录
+          for(auto it = tuples.begin(); it != tuples.end();it++
+          ){
+            sum += static_cast<IntValue *>(const_cast<TupleValue *>(&it->get(0)))->get_value();
+          }
+          out.add(sum);
           break;
         }
       }
@@ -410,6 +458,7 @@ RC ExecuteStage::do_select(const char *db, const Query *sql,
     //TODO 添加聚合算子
     // 当前只查询一张表，直接返回结果即可
       aggregation_exec(selects, &tuple_sets.front());
+      // agg_to_string();
       tuple_sets.front().print(ss);
     }
     for (SelectExeNode *&tmp_node: select_nodes) {
