@@ -152,6 +152,11 @@ public:
 
   void print(std::ostream &os) const;
 
+  //定义一个交换元组的方法
+  void swap_tuple(int i, int j){
+    std::swap(tuples_[i],tuples_[j]);
+  }
+
 public:
   const TupleSchema &schema() const
   {

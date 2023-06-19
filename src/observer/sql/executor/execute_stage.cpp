@@ -216,6 +216,90 @@ void end_trx_if_need(Session *session, Trx *trx, bool all_right)
   }
 }
 
+int partition_tuple(TupleSet *res_tuples, int l, int r, OrderType order_type, int order_col_idx){
+  int i = l-1;
+  const Tuple* pivot = &(res_tuples->get(r));
+  for(int j = l; j<r; j++){
+    
+    if(pivot->get(order_col_idx).compare((&(res_tuples->get(j)))->get(order_col_idx))>0){
+      if(order_type==kOrderAsc){
+        i++;
+        res_tuples->swap_tuple(i,j);
+      }
+    }else if(pivot->get(order_col_idx).compare((&(res_tuples->get(j)))->get(order_col_idx))<0){
+      if(order_type==kOrderDesc){
+        i++;
+        res_tuples->swap_tuple(i,j);
+      }
+    }
+  }
+  res_tuples->swap_tuple(i+1,r);
+  return i+1;
+}
+
+void quick_sort_tuple(TupleSet *res_tuples, int l, int r, OrderType order_type, int order_col_idx){
+  if(l<r){
+    int mid = partition_tuple(res_tuples, l, r, order_type, order_col_idx);
+    quick_sort_tuple(res_tuples, l , mid-1,order_type, order_col_idx);
+    quick_sort_tuple(res_tuples, mid+1, r, order_type, order_col_idx);  
+  }
+}
+
+void order_by_exec(const Selects &selects, TupleSet *res_tuples){
+  if(selects.order_num>0){
+    if(selects.order_num==1){
+      // 排序方法（顺序和逆序）
+      OrderType order_type = selects.order_des[0].type;
+      char *relation_name = selects.order_des[0].relation_name;
+      char *attribute_name = selects.order_des[0].attribute_name;
+      if(relation_name==nullptr){
+        relation_name =selects.relations[0];
+      }
+      // 对应排序数值在元组中的idx位置
+      if(selects.relation_num==1){
+        int order_col_idx = -1;
+        const TupleSchema &tupleschema = res_tuples->get_schema();
+        order_col_idx = tupleschema.index_of_field(relation_name,attribute_name);
+        quick_sort_tuple(res_tuples,0,res_tuples->size()-1,order_type,order_col_idx);
+      }else{
+
+      }
+      // 快排
+    }else if(selects.order_num==2){
+      // 按照两个参数进行排序需要先按照后一个排序，在按照前一个排序
+      OrderType order_type = selects.order_des[1].type;
+      char *relation_name = selects.order_des[1].relation_name;
+      char *attribute_name = selects.order_des[1].attribute_name;
+      if(relation_name==nullptr){
+        relation_name =selects.relations[1];
+      }
+      if(selects.relation_num==1){
+        // 对应排序数值在元组中的idx位置
+        int order_col_idx = -1;
+        const TupleSchema &tupleschema = res_tuples->get_schema();
+        order_col_idx = tupleschema.index_of_field(relation_name,attribute_name);
+      
+        // 快排
+        quick_sort_tuple(res_tuples,0,res_tuples->size()-1,order_type,order_col_idx);
+
+        order_type = selects.order_des[0].type;
+        relation_name = selects.order_des[0].relation_name;
+        attribute_name = selects.order_des[0].attribute_name;
+        // if(relation_name==nullptr){
+        //   relation_name =selects.relations[0];
+        // }
+        // 对应排序数值在元组中的idx位置
+        const TupleSchema &tupleschema2 = res_tuples->get_schema();
+        order_col_idx = tupleschema2.index_of_field(relation_name,attribute_name);
+      
+        // 快排
+        quick_sort_tuple(res_tuples,0,res_tuples->size()-1,order_type,order_col_idx);
+      }
+    }
+  }
+  return;
+}
+
 // 这里没有对输入的某些信息做合法性校验，比如查询的列名、where条件中的列名等，没有做必要的合法性校验
 // 需要补充上这一部分. 校验部分也可以放在resolve，不过跟execution放一起也没有关系
 RC ExecuteStage::do_select(const char *db, Query *sql, SessionEvent *session_event)
@@ -268,6 +352,7 @@ RC ExecuteStage::do_select(const char *db, Query *sql, SessionEvent *session_eve
     // 本次查询了多张表，需要做join操作
   } else {
     // 当前只查询一张表，直接返回结果即可
+    order_by_exec(selects,&tuple_sets.front());
     tuple_sets.front().print(ss);
   }
 
