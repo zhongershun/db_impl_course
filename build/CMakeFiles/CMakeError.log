@@ -1,0 +1,66 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_0d419/fast && /usr/bin/make  -f CMakeFiles/cmTC_0d419.dir/build.make CMakeFiles/cmTC_0d419.dir/build
+make[1]: Entering directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D'
+Building C object CMakeFiles/cmTC_0d419.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG   -o CMakeFiles/cmTC_0d419.dir/src.c.o -c /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c
+Linking C executable cmTC_0d419
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0d419.dir/link.txt --verbose=1
+/usr/bin/cc  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG   CMakeFiles/cmTC_0d419.dir/src.c.o -o cmTC_0d419 
+CMakeFiles/cmTC_0d419.dir/src.c.o: In function `main':
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c:11: undefined reference to `pthread_create'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c:12: undefined reference to `pthread_detach'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c:13: undefined reference to `pthread_cancel'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c:14: undefined reference to `pthread_join'
+/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D/src.c:15: undefined reference to `pthread_atfork'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_0d419.dir/build.make:98: recipe for target 'cmTC_0d419' failed
+make[1]: *** [cmTC_0d419] Error 1
+make[1]: Leaving directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-zeZV5D'
+Makefile:127: recipe for target 'cmTC_0d419/fast' failed
+make: *** [cmTC_0d419/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HBrvyi
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_b486e/fast && /usr/bin/make  -f CMakeFiles/cmTC_b486e.dir/build.make CMakeFiles/cmTC_b486e.dir/build
+make[1]: Entering directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HBrvyi'
+Building C object CMakeFiles/cmTC_b486e.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG  -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_b486e.dir/CheckFunctionExists.c.o -c /home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HBrvyi/CheckFunctionExists.c
+Linking C executable cmTC_b486e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b486e.dir/link.txt --verbose=1
+/usr/bin/cc  -Wall -DCMAKE_EXPORT_COMPILE_COMMANDS=1  -O0 -g -DDEBUG  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_b486e.dir/CheckFunctionExists.c.o -o cmTC_b486e  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_b486e.dir/build.make:98: recipe for target 'cmTC_b486e' failed
+make[1]: *** [cmTC_b486e] Error 1
+make[1]: Leaving directory '/home/zhongershun/db_impl_course/build/CMakeFiles/CMakeScratch/TryCompile-HBrvyi'
+Makefile:127: recipe for target 'cmTC_b486e/fast' failed
+make: *** [cmTC_b486e/fast] Error 2
+
+
+
